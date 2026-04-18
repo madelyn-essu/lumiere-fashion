@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUMIÈRE | Modern Fashion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a1a1a;
+            --accent: #d4af37;
+            --bg: #fafafa;
+            --text: #333;
+            --light-gray: #f5f5f5;
+            --success: #4CAF50;
+            --error: #f44336;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--bg);
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(10px);
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--accent);
+        }
+
+        .cart-icon {
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .cart-icon:hover {
+            background: var(--accent);
+            transform: scale(1.05);
+        }
+
+        .cart-count {
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 80px;
+            height: 90vh;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            letter-spacing: 5px;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #666;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 3rem;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            transition: all 0.3s;
+            margin: 0.5rem;
+            border: 2px solid var(--primary);
+            cursor: pointer;
+            font-size: 1rem;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .cta-button:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .cta-outline {
+            background: transparent;
+            color: var(--primary);
+        }
+
+        .cta-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            display: none;
+            align-items: center;
+            gap: 1rem;
+            z-index: 3000;
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.show {
+            display: flex;
+        }
+
+        .toast.success {
+            background: var(--success);
+        }
+
+        /* Cart Sidebar */
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 20px rgba(0,0,0,0.1);
+            z-index: 2000;
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-sidebar.open {
+            right: 0;
+        }
+
+        .cart-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-header h3 {
+            font-size: 1.3rem;
+        }
+
+        .close-cart {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+        }
+
+        .cart-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .cart-item-price {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .qty-btn {
+            width: 25px;
+            height: 25px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qty-btn:hover {
+            background: var(--light-gray);
+        }
+
+        .remove-item {
+            color: var(--error);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.3rem;
+        }
+
+        .cart-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #eee;
+            background: var(--light-gray);
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .checkout-btn:hover {
+            background: var(--accent);
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 3rem;
+            color: #999;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1500;
+            display: none;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        /* Section Styles */
+        section {
+            padding: 5rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: var(--accent);
+            margin: 1rem auto;
+        }
+
+        .section-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Category Filter */
+        .category-filter {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1.5rem;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Product Grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--accent);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            z-index: 10;
+        }
+
+        .product-badge.new {
+            background: var(--success);
+        }
+
+        .product-badge.sale {
+            background: var(--error);
+        }
+
+        .product-image-container {
+            height: 350px;
+            overflow: hidden;
+            position: relative;
+            background: var(--light-gray);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+
+        .quick-view {
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: bottom 0.3s;
+            cursor: pointer;
+            font-size: 0.9rem;
+            border: none;
+        }
+
+        .product-card:hover .quick-view {
+            bottom: 20px;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-category {
+            color: #999;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.3rem;
+        }
+
+        .product-name {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .product-price {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .current-price {
+            color: var(--accent);
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .original-price {
+            text-decoration: line-through;
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .add-to-cart {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .add-to-cart:hover {
+            background: var(--accent);
+            transform: scale(1.02);
+        }
+
+        .add-to-cart.added {
+            background: var(--success);
+        }
+
+        /* Product Modal */
+        .product-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2500;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .product-modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            position: relative;
+        }
+
+        .modal-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            min-height: 400px;
+        }
+
+        .modal-details {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .modal-category {
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-price {
+            font-size: 1.5rem;
+            color: var(--accent);
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-description {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .size-selector {
+            margin-bottom: 1.5rem;
+        }
+
+        .size-selector label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .size-options {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .size-option {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .size-option:hover, .size-option.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .modal-add-to-cart {
+            padding: 1rem 2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background 0.3s;
+            margin-top: auto;
+        }
+
+        .modal-add-to-cart:hover {
+            background: var(--accent);
+        }
+
+        /* Collections Section */
+        .collections {
+            background: var(--light-gray);
+            padding: 5rem 5%;
+            max-width: 100%;
+        }
+
+        .collection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .collection-card {
+            position: relative;
+            height: 400px;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .collection-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .collection-card:hover img {
+            transform: scale(1.1);
+        }
+
+        .collection-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .collection-overlay h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Features Section */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: center;
+            padding: 3rem 5%;
+            background: white;
+            margin: 0;
+            max-width: 100%;
+        }
+
+        .feature {
+            padding: 1rem;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature h4 {
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .feature p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* About Section */
+        .about {
+            background: white;
+            padding: 5rem 5%;
+        }
+
+        .about-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-image {
+            height: 400px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .about-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .about-content p {
+            margin-bottom: 1rem;
+            line-height: 1.8;
+            color: #555;
+        }
+
+        .stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 5rem 5%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .contact-form {
+            background: white;
+            padding: 3rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .submit-btn {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 3rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            background: var(--accent);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary);
+            color: white;
+            padding: 3rem 5% 1rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+            color: #999;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .about-container {
+                grid-template-columns: 1fr;
+            }
+
+            .cart-sidebar {
+                width: 100%;
+                right: -100%;
+            }
+
+            .modal-content {
+                grid-template-columns: 1fr;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <span id="toast-message">Item added to cart!</span>
+    </div>
+
+    <!-- Overlay -->
+    <div id="overlay" class="overlay" onclick="closeCart()"></div>
+
+    <!-- Cart Sidebar -->
+    <div id="cart-sidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h3>🛒 Your Cart</h3>
+            <button class="close-cart" onclick="closeCart()">×</button>
+        </div>
+        <div id="cart-items" class="cart-items">
+            <div class="empty-cart">
+                <p>Your cart is empty</p>
+                <p style="font-size: 0.9rem; margin-top: 0.5rem;">Add some items to get started!</p>
+            </div>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cart-total">₱0</span>
+            </div>
+            <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="product-modal" class="product-modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">×</button>
+            <img id="modal-image" class="modal-image" src="" alt="">
+            <div class="modal-details">
+                <div id="modal-category" class="modal-category"></div>
+                <h2 id="modal-title" class="modal-title"></h2>
+                <div id="modal-price" class="modal-price"></div>
+                <p id="modal-description" class="modal-description"></p>
+                <div class="size-selector">
+                    <label>Select Size:</label>
+                    <div class="size-options">
+                        <button class="size-option selected">S</button>
+                        <button class="size-option">M</button>
+                        <button class="size-option">L</button>
+                        <button class="size-option">XL</button>
+                    </div>
+                </div>
+                <button id="modal-add-btn" class="modal-add-to-cart">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo" onclick="scrollToSection('home')">LUMIÈRE</div>
+            <ul class="nav-links">
+                <li><a href="#home" onclick="scrollToSection('home')">Home</a></li>
+                <li><a href="#shop" onclick="scrollToSection('shop')">Shop</a></li>
+                <li><a href="#collections" onclick="scrollToSection('collections')">Collections</a></li>
+                <li><a href="#about" onclick="scrollToSection('about')">About</a></li>
+                <li><a href="#contact" onclick="scrollToSection('contact')">Contact</a></li>
+            </ul>
+            <div class="cart-icon" onclick="openCart()">
+                🛒 Cart
+                <span id="cart-count" class="cart-count" style="display: none;">0</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home/Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>LUMIÈRE</h1>
+            <p>Elevate Your Style. Curated Fashion for the Modern Individual.</p>
+            <div>
+                <button class="cta-button" onclick="scrollToSection('shop')">Shop Collection</button>
+                <button class="cta-button cta-outline" onclick="scrollToSection('collections')">View Lookbook</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <div class="features">
+        <div class="feature">
+            <div class="feature-icon">🚚</div>
+            <h4>Free Shipping</h4>
+            <p>On orders over ₱2,000</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">🌱</div>
+            <h4>Sustainable</h4>
+            <p>Eco-friendly materials</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">✨</div>
+            <h4>Local Craftsmanship</h4>
+            <p>Philippine-made quality</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">↩️</div>
+            <h4>Easy Returns</h4>
+            <p>7-day return policy</p>
+        </div>
+    </div>
+
+    <!-- Shop Section -->
+    <section id="shop">
+        <div class="section-header">
+            <h2 class="section-title">Our Products</h2>
+            <p class="section-subtitle">Carefully curated pieces for your wardrobe</p>
+        </div>
+
+        <div class="category-filter">
+            <button class="filter-btn active" onclick="filterProducts('all')">All</button>
+            <button class="filter-btn" onclick="filterProducts('tops')">Tops</button>
+            <button class="filter-btn" onclick="filterProducts('bottoms')">Bottoms</button>
+            <button class="filter-btn" onclick="filterProducts('outerwear')">Outerwear</button>
+            <button class="filter-btn" onclick="filterProducts('dresses')">Dresses</button>
+            <button class="filter-btn" onclick="filterProducts('accessories')">Accessories</button>
+        </div>
+
+        <div id="product-grid" class="product-grid">
+            <!-- Products will be inserted here by JavaScript -->
+        </div>
+    </section>
+
+    <!-- Collections Section -->
+    <section id="collections" class="collections">
+        <div class="section-header">
+            <h2 class="section-title">Seasonal Collections</h2>
+            <p class="section-subtitle">Curated looks for every occasion</p>
+        </div>
+
+        <div class="collection-grid">
+            <div class="collection-card" onclick="showCollection('summer')">
+                <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&h=800&fit=crop" alt="Summer Collection">
+                <div class="collection-overlay">
+                    <h3>Summer Essentials</h3>
+                    <p>Light fabrics & breezy silhouettes</p>
+                </div>
+            </div>
+            <div class="collection-card" onclick="showCollection('office')">
+                <img src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600&h=800&fit=crop" alt="Office Collection">
+                <div class="collection-overlay">
+                    <h3>Office Edit</h3>
+                    <p>Professional & polished</p>
+                </div>
+            </div>
+            <div class="collection-card" onclick="showCollection('weekend')">
+                <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=600&h=800&fit=crop" alt="Weekend Collection">
+                <div class="collection-overlay">
+                    <h3>Weekend Casual</h3>
+                    <p>Relaxed & comfortable</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="about-container">
+            <div class="about-image">
+                <img src="https://images.unsplash.com/photo-1558171813-4c088753af8f?w=800&h=1000&fit=crop" alt="Fashion Atelier">
+            </div>
+            <div class="about-content">
+                <h2>Our Story</h2>
+                <p>Founded in 2024 in the heart of the Philippines, LUMIÈRE represents the intersection of contemporary design and traditional craftsmanship. We partner with local artisans to create pieces that honor both heritage and modern aesthetics.</p>
+                <p>Each garment is produced in small batches using sustainably sourced materials, ensuring quality while minimizing environmental impact. From our atelier in Eastern Samar to your wardrobe, every piece tells a story of dedication and artistry.</p>
+
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">Local Artisans</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Sustainable</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">5k+</div>
+                        <div class="stat-label">Happy Customers</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="section-header">
+            <h2 class="section-title">Get In Touch</h2>
+            <p class="section-subtitle">We'd love to hear from you</p>
+        </div>
+
+        <div class="contact-form">
+            <form id="contact-form" onsubmit="handleContact(event)">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" required placeholder="Juan">
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" required placeholder="Dela Cruz">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" required placeholder="juan@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Subject</label>
+                    <input type="text" placeholder="Order Inquiry">
+                </div>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea rows="5" required placeholder="How can we help you?"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>LUMIÈRE</h4>
+                <p style="color: #ccc; line-height: 1.6;">Modern fashion meets Filipino craftsmanship. Sustainable, ethical, timeless.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Shop</h4>
+                <ul>
+                    <li><a href="#" onclick="scrollToSection('shop'); return false;">New Arrivals</a></li>
+                    <li><a href="#" onclick="scrollToSection('shop'); return false;">Best Sellers</a></li>
+                    <li><a href="#" onclick="filterProducts('sale'); return false;">Sale</a></li>
+                    <li><a href="#">Gift Cards</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Help</h4>
+                <ul>
+                    <li><a href="#">Shipping Info</a></li>
+                    <li><a href="#">Returns</a></li>
+                    <li><a href="#">Size Guide</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <ul>
+                    <li>📍 Quinapondan, Eastern Samar</li>
+                    <li>📧 baldecanasmadelyn53@gmail.com</li>
+                    <li>📱 09700230101</li>
+                    <li>🕐 Mon-Fri 9AM-6PM</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 LUMIÈRE Fashion. All rights reserved. | Final Examination Project | Eastern Samar State University</p>
+        </div>
+    </footer>
+
+    <script>
+        // Product Data
+        const products = [
+            {
+                id: 1,
+                name: "Oversized Linen Shirt",
+                category: "tops",
+                price: 1299,
+                originalPrice: null,
+                badge: "new",
+                image: "https://kimi-web-img.moonshot.cn/img/www.urbankissed.com/3fa37c44be7fecce86676bea92c0d78f22b3fc63.jpg",
+                description: "Breathable 100% linen shirt with relaxed fit. Perfect for tropical weather and effortless style. Features mother-of-pearl buttons and a classic collar."
+            },
+            {
+                id: 2,
+                name: "Classic Beige Trench",
+                category: "outerwear",
+                price: 3499,
+                originalPrice: null,
+                badge: null,
+                image: "https://kimi-web-img.moonshot.cn/img/www.laelen.com/109f2c0a6168cb4162ee4016ba4cf26dd2657a26.png",
+                description: "Timeless double-breasted trench coat in water-resistant cotton gabardine. Features belted waist and storm flaps."
+            },
+            {
+                id: 3,
+                name: "Cream Wide-Leg Trousers",
+                category: "bottoms",
+                price: 1439,
+                originalPrice: 1799,
+                badge: "sale",
+                image: "https://kimi-web-img.moonshot.cn/img/mediahub.karenmillen.com/0c3f9e311b39447806d39dffcc40280987b9b6af",
+                description: "Elegant high-waisted trousers with flowing wide legs. Made from premium crepe fabric with a subtle sheen."
+            },
+            {
+                id: 4,
+                name: "Emerald Silk Midi Dress",
+                category: "dresses",
+                price: 2899,
+                originalPrice: null,
+                badge: null,
+                image: "https://kimi-web-img.moonshot.cn/img/www.lulus.com/4e6b26d49adc2ab40262ffbf2d0d8656df0285f8.jpg",
+                description: "Luxurious silk satin dress in deep emerald. Features twist-front detail and elegant midi length. Perfect for evening events."
+            },
+            {
+                id: 5,
+                name: "Chunky Knit Cardigan",
+                category: "outerwear",
+                price: 1599,
+                originalPrice: null,
+                badge: "new",
+                image: "https://kimi-web-img.moonshot.cn/img/www.chicwish.com/4433821f12a0a7103ed2d6b908b6557f5ab1c527.jpg",
+                description: "Cozy oversized cardigan in cream cotton blend. Features exaggerated buttons and patch pockets for a relaxed vibe."
+            },
+            {
+                id: 6,
+                name: "Ribbed Cotton Tank",
+                category: "tops",
+                price: 599,
+                originalPrice: null,
+                badge: null,
+                image: "https://kimi-web-img.moonshot.cn/img/www.alcott.eu/888fc5881dbc8f43f6cf23a0f1350e54e37d7c68.jpg",
+                description: "Essential ribbed tank top in soft organic cotton. Slim fit with high neckline. Perfect for layering or wearing alone."
+            },
+            {
+                id: 7,
+                name: "Black Pleated Midi Skirt",
+                category: "bottoms",
+                price: 1199,
+                originalPrice: null,
+                badge: null,
+                image: "https://kimi-web-img.moonshot.cn/img/www.lulus.com/ac800c6e8386d623e6b9268726c162f67b19f592.jpg",
+                description: "Sophisticated pleated skirt in black satin. Features elastic waistband and flowing movement. A wardrobe staple."
+            },
+            {
+                id: 8,
+                name: "Minimalist Leather Tote",
+                category: "accessories",
+                price: 2549,
+                originalPrice: 2999,
+                badge: "sale",
+                image: "https://kimi-web-img.moonshot.cn/img/cdn.shopify.com/e9f62462a9adba98649bf7857edffe636262358f.jpg",
+                description: "Structured black leather tote with gold hardware. Spacious interior with laptop compartment. Perfect for work or travel."
+            },
+            {
+                id: 9,
+                name: "Structured Linen Blazer",
+                category: "outerwear",
+                price: 2299,
+                originalPrice: null,
+                badge: null,
+                image: "https://kimi-web-img.moonshot.cn/img/magiclinen.com/d570bd24389fa47537aa0c5c269335b27eb06877.jpg",
+                description: "Tailored blazer in natural linen melange. Double-breasted with relaxed fit. Ideal for smart-casual occasions."
+            },
+            {
+                id: 10,
+                name: "Straw Wide Brim Hat",
+                category: "accessories",
+                price: 899,
+                originalPrice: null,
+                badge: "new",
+                image: "https://kimi-web-img.moonshot.cn/img/i5.walmartimages.com/ffe2443e9bddb3b9f3d9769e0fe5ddee5f9ab4ea.jpeg",
+                description: "Handwoven straw sun hat with wide brim and white ribbon band. UPF 50 protection. Packable and foldable."
+            },
+            {
+                id: 11,
+                name: "Vintage Wash Denim Jacket",
+                category: "outerwear",
+                price: 1899,
+                originalPrice: null,
+                badge: null,
+                image: "https://kimi-web-img.moonshot.cn/img/i.etsystatic.com/189ab79c7f3bcc7af28ca03029ffb594a685a092.jpg",
+                description: "Oversized denim jacket with vintage wash. Features roomy pockets and relaxed silhouette. Unisex fit."
+            },
+            {
+                id: 12,
+                name: "Printed Silk Scarf",
+                category: "accessories",
+                price: 699,
+                originalPrice: null,
+                badge: null,
+                image: "https://kimi-web-img.moonshot.cn/img/evelynfashions.com/d9d77e4d4e393a63d623c727bf758c7bfaefbcb5.jpg",
+                description: "Luxurious silk scarf with exclusive floral print. Hand-rolled edges. Versatile accessory for neck, hair, or bag."
+            }
+        ];
+
+        // Cart State
+        let cart = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProducts('all');
+            updateCartUI();
+        });
+
+        // Render Products
+        function renderProducts(filter) {
+            const grid = document.getElementById('product-grid');
+            let filtered = products;
+
+            if (filter !== 'all') {
+                if (filter === 'sale') {
+                    filtered = products.filter(p => p.badge === 'sale');
+                } else {
+                    filtered = products.filter(p => p.category === filter);
+                }
+            }
+
+            grid.innerHTML = filtered.map(product => `
+                <div class="product-card" data-category="${product.category}">
+                    ${product.badge ? `<div class="product-badge ${product.badge}">${product.badge === 'sale' ? '-20%' : 'NEW'}</div>` : ''}
+                    <div class="product-image-container">
+                        <img class="product-image" src="${product.image}" alt="${product.name}" loading="lazy">
+                        <button class="quick-view" onclick="openModal(${product.id})">Quick View</button>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-category">${product.category}</div>
+                        <h3 class="product-name">${product.name}</h3>
+                        <div class="product-price">
+                            <span class="current-price">₱${product.price.toLocaleString()}</span>
+                            ${product.originalPrice ? `<span class="original-price">₱${product.originalPrice.toLocaleString()}</span>` : ''}
+                        </div>
+                        <button class="add-to-cart" onclick="addToCart(${product.id})" id="btn-${product.id}">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter Products
+        function filterProducts(category) {
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase().includes(category) || 
+                    (category === 'all' && btn.textContent === 'All') ||
+                    (category === 'sale' && btn.textContent === 'Sale')) {
+                    btn.classList.add('active');
+                }
+            });
+
+            renderProducts(category);
+        }
+
+        // Add to Cart
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+
+            updateCartUI();
+            showToast(`${product.name} added to cart!`);
+
+            // Button feedback
+            const btn = document.getElementById(`btn-${productId}`);
+            if (btn) {
+                btn.textContent = 'Added ✓';
+                btn.classList.add('added');
+                setTimeout(() => {
+                    btn.textContent = 'Add to Cart';
+                    btn.classList.remove('added');
+                }, 1500);
+            }
+        }
+
+        // Remove from Cart
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCartUI();
+        }
+
+        // Update Quantity
+        function updateQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    updateCartUI();
+                }
+            }
+        }
+
+        // Update Cart UI
+        function updateCartUI() {
+            const cartItems = document.getElementById('cart-items');
+            const cartCount = document.getElementById('cart-count');
+            const cartTotal = document.getElementById('cart-total');
+
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            // Update count badge
+            if (totalItems > 0) {
+                cartCount.textContent = totalItems;
+                cartCount.style.display = 'flex';
+            } else {
+                cartCount.style.display = 'none';
+            }
+
+            // Update total
+            cartTotal.textContent = `₱${totalPrice.toLocaleString()}`;
+
+            // Update items
+            if (cart.length === 0) {
+                cartItems.innerHTML = `
+                    <div class="empty-cart">
+                        <p style="font-size: 3rem; margin-bottom: 1rem;">🛒</p>
+                        <p>Your cart is empty</p>
+                        <p style="font-size: 0.9rem; margin-top: 0.5rem; color: #999;">Add some items to get started!</p>
+                    </div>
+                `;
+            } else {
+                cartItems.innerHTML = cart.map(item => `
+                    <div class="cart-item">
+                        <img src="${item.image}" alt="${item.name}">
+                        <div class="cart-item-details">
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-price">₱${item.price.toLocaleString()}</div>
+                            <div class="quantity-controls">
+                                <button class="qty-btn" onclick="updateQuantity(${item.id}, -1)">−</button>
+                                <span>${item.quantity}</span>
+                                <button class="qty-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="remove-item" onclick="removeFromCart(${item.id})">🗑️</div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Open/Close Cart
+        function openCart() {
+            document.getElementById('cart-sidebar').classList.add('open');
+            document.getElementById('overlay').classList.add('show');
+        }
+
+        function closeCart() {
+            document.getElementById('cart-sidebar').classList.remove('open');
+            document.getElementById('overlay').classList.remove('show');
+        }
+
+        // Product Modal
+        function openModal(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            document.getElementById('modal-image').src = product.image;
+            document.getElementById('modal-category').textContent = product.category;
+            document.getElementById('modal-title').textContent = product.name;
+            document.getElementById('modal-price').textContent = `₱${product.price.toLocaleString()}`;
+            document.getElementById('modal-description').textContent = product.description;
+            document.getElementById('modal-add-btn').onclick = () => {
+                addToCart(productId);
+                closeModal();
+            };
+
+            document.getElementById('product-modal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('product-modal').classList.remove('show');
+        }
+
+        // Size Selection
+        document.querySelectorAll('.size-option').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.size-option').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        // Toast Notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = message;
+            toast.classList.add('show', 'success');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Scroll to Section
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                const navHeight = 80;
+                const elementPosition = element.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - navHeight;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        // Contact Form
+        function handleContact(e) {
+            e.preventDefault();
+            showToast('Message sent successfully! We will respond within 24 hours.');
+            document.getElementById('contact-form').reset();
+        }
+
+        // Checkout
+        function checkout() {
+            if (cart.length === 0) {
+                showToast('Your cart is empty!');
+                return;
+            }
+
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            alert(`Thank you for your order!\n\nTotal: ₱${total.toLocaleString()}\n\nThis is a demo checkout. In a real store, this would proceed to payment.`);
+            cart = [];
+            updateCartUI();
+            closeCart();
+        }
+
+        // Collection Click
+        function showCollection(type) {
+            scrollToSection('shop');
+            // Could filter by collection here
+            showToast(`Showing ${type} collection items!`);
+        }
+
+        // Close modal on outside click
+        document.getElementById('product-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeCart();
+                closeModal();
+            }
+        });
+    </script>
+
+</body>
+</html>
